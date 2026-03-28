@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f5f9; margin: 0; padding: 2rem; }
+        .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; }
+        .header { background: #2563eb; color: #ffffff; padding: 2rem; text-align: center; }
+        .header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; }
+        .header p { margin: 0.5rem 0 0; opacity: 0.85; font-size: 0.9rem; }
+        .body { padding: 2rem; }
+        .body p { color: #374151; line-height: 1.6; }
+        .recap { background: #f8fafc; border-radius: 8px; padding: 1.25rem; margin: 1.5rem 0; border: 1px solid #e2e8f0; }
+        .recap table { width: 100%; border-collapse: collapse; }
+        .recap td { padding: 6px 0; font-size: 0.9rem; }
+        .recap td:first-child { color: #6b7280; width: 40%; }
+        .recap td:last-child { font-weight: 600; color: #111827; }
+        .ref { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem; text-align: center; font-size: 1.1rem; font-weight: 700; color: #1d4ed8; margin: 1rem 0; }
+        .note { font-size: 0.85rem; color: #6b7280; border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 1rem; }
+        .footer { background: #1e293b; color: #94a3b8; padding: 1.25rem 2rem; text-align: center; font-size: 0.8rem; }
+        .footer strong { color: #ffffff; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>✅ Réservation confirmée !</h1>
+        <p>EventBook — Votre plateforme d'événements</p>
+    </div>
+
+    <div class="body">
+        <p>Bonjour <strong>{{ reservation.name }}</strong>,</p>
+        <p>Votre réservation pour l'événement <strong>{{ event.title }}</strong> a bien été enregistrée.</p>
+
+        <div class="recap">
+            <table>
+                <tr>
+                    <td>Événement</td>
+                    <td>{{ event.title }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>{{ event.date|date('d/m/Y à H:i') }}</td>
+                </tr>
+                <tr>
+                    <td>Lieu</td>
+                    <td>{{ event.location }}</td>
+                </tr>
+                <tr>
+                    <td>Nom</td>
+                    <td>{{ reservation.name }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ reservation.email }}</td>
+                </tr>
+                <tr>
+                    <td>Téléphone</td>
+                    <td>{{ reservation.phone }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="ref">Réf. #{{ reservation.id }}</div>
+
+        <p class="note">
+            Présentez cette référence le jour de l'événement.
+            Pour toute question, répondez à cet email.
+        </p>
+    </div>
+
+    <div class="footer">
+        <strong>EventBook</strong> · Votre plateforme d'événements<br>
+        Cet email a été envoyé automatiquement.
+    </div>
+
+</div>
+</body>
+</html>
