@@ -1,0 +1,86 @@
+security:
+    # Encodage des mots de passe
+    password_hashers:
+        App\Entity\User:
+            algorithm: bcrypt
+        App\Entity\Admin:
+            algorithm: bcrypt
+
+    # Providers (sources des utilisateurs)
+    providers:
+        user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+        admin_provider:
+            entity:
+                class: App\Entity\Admin
+                property: username
+        all_users:
+            chain:
+                providers: ['user_provider', 'admin_provider']
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Firewall pour l'API (JWT)
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: user_provider
+            jwt: ~
+
+        # Firewall pour l'admin (session classique)
+        admin:
+            pattern: ^/admin
+            provider: admin_provider
+            form_login:
+                login_path: admin_login
+                check_path: admin_login
+                default_target_path: admin_dashboard
+                username_parameter: username
+                password_parameter: password
+                enable_csrf: true
+            logout:
+                path: admin_logout
+                target: admin_login
+
+        # Firewall principal (utilisateurs - JWT + Passkeys)
+        main:
+            lazy: true
+            provider: user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: app_events
+                username_parameter: username
+                password_parameter: password
+                enable_csrf: true          
+            logout:
+                path: app_logout
+                target: app_login
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+
+    # Contrôle d'accès par URL
+    access_control:
+        # API publique (login, liste événements)
+        - { path: ^/api/auth, roles: PUBLIC_ACCESS }
+        - { path: ^/api/events$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/events/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
+        # API protégée (réservations)
+        - { path: ^/api/reservations, roles: ROLE_USER }
+        # Admin
+        - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        # Partie publique
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/events, roles: PUBLIC_ACCESS }
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN]
