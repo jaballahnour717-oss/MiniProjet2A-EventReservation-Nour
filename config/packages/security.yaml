@@ -60,7 +60,7 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: app_events
+                default_target_path: app_events_index
                 username_parameter: username
                 password_parameter: password
                 enable_csrf: true          
