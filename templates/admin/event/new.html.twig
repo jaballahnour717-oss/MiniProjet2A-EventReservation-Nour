@@ -1,0 +1,58 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Nouvel événement — Admin{% endblock %}
+{% block page_title %}Créer un événement{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4">
+                {{ form_start(form, {attr: {enctype: 'multipart/form-data', novalidate: 'novalidate'}}) }}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            {{ form_label(form.title) }}
+                            {{ form_widget(form.title) }}
+                            {{ form_errors(form.title) }}
+                        </div>
+                        <div class="col-12">
+                            {{ form_label(form.description) }}
+                            {{ form_widget(form.description) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.date) }}
+                            {{ form_widget(form.date) }}
+                            {{ form_errors(form.date) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.seats) }}
+                            {{ form_widget(form.seats) }}
+                            {{ form_errors(form.seats) }}
+                        </div>
+                        <div class="col-12">
+                            {{ form_label(form.location) }}
+                            {{ form_widget(form.location) }}
+                            {{ form_errors(form.location) }}
+                        </div>
+                        <div class="col-12">
+                            {{ form_label(form.imageFile) }}
+                            {{ form_widget(form.imageFile) }}
+                            {{ form_errors(form.imageFile) }}
+                            <div class="form-text">JPG, PNG, WEBP — max 5 Mo</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-2"></i>Créer l'événement
+                        </button>
+                        <a href="{{ path('admin_events_index') }}" class="btn btn-outline-secondary">
+                            Annuler
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}{{ event.title }} — Admin{% endblock %}
+{% block page_title %}Détail de l'événement{% endblock %}
+
+{% block body %}
+<div class="d-flex gap-2 mb-4">
+    <a href="{{ path('admin_events_edit', {id: event.id}) }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-pencil me-1"></i>Modifier
+    </a>
+    <a href="{{ path('admin_events_index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Retour
+    </a>
+</div>
+
+<div class="row g-4">
+    {# ── Infos événement ── #}
+    <div class="col-lg-4">
+        <div class="card overflow-hidden">
+            {% if event.image %}
+                <img src="/uploads/{{ event.image }}" class="card-img-top"
+                     alt="{{ event.title }}" style="height:180px; object-fit:cover;">
+            {% else %}
+                <div class="d-flex align-items-center justify-content-center bg-light"
+                     style="height:120px;">
+                    <i class="bi bi-calendar-event display-4 text-muted"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">{{ event.title }}</h6>
+                <dl class="row small mb-0">
+                    <dt class="col-5 text-muted">Date</dt>
+                    <dd class="col-7">{{ event.date|date('d/m/Y H:i') }}</dd>
+                    <dt class="col-5 text-muted">Lieu</dt>
+                    <dd class="col-7">{{ event.location }}</dd>
+                    <dt class="col-5 text-muted">Places totales</dt>
+                    <dd class="col-7">{{ event.seats }}</dd>
+                    <dt class="col-5 text-muted">Réservées</dt>
+                    <dd class="col-7">
+                        <span class="badge bg-primary">{{ reservations|length }}</span>
+                    </dd>
+                    <dt class="col-5 text-muted">Disponibles</dt>
+                    <dd class="col-7">
+                        <span class="badge {% if event.availableSeats > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ event.availableSeats }}
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        {# Taux de remplissage #}
+        {% set fillRate = event.seats > 0 ? ((reservations|length / event.seats) * 100)|round : 0 %}
+        <div class="card mt-3">
+            <div class="card-body py-2">
+                <div class="d-flex justify-content-between small mb-1">
+                    <span class="text-muted">Taux de remplissage</span>
+                    <span class="fw-semibold">{{ fillRate }}%</span>
+                </div>
+                <div class="progress" style="height:6px">
+                    <div class="progress-bar
+                        {% if fillRate >= 90 %}bg-danger
+                        {% elseif fillRate >= 60 %}bg-warning
+                        {% else %}bg-success{% endif %}"
+                        style="width:{{ fillRate }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ── Réservations ── #}
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-semibold mb-0">
+                        Réservations
+                        <span class="badge bg-secondary ms-1">{{ reservations|length }}</span>
+                    </h6>
+                </div>
+                {% if reservations is empty %}
+                    <p class="text-muted text-center py-3">Aucune réservation pour cet événement.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr><th>#</th><th>Nom</th><th>Email</th><th>Téléphone</th><th>Date</th></tr>
+                            </thead>
+                            <tbody>
+                            {% for r in reservations %}
+                                <tr>
+                                    <td class="text-muted small">{{ r.id }}</td>
+                                    <td class="small fw-semibold">{{ r.name }}</td>
+                                    <td class="small">
+                                        <a href="mailto:{{ r.email }}" class="text-decoration-none">
+                                            {{ r.email }}
+                                        </a>
+                                    </td>
+                                    <td class="small">{{ r.phone }}</td>
+                                    <td class="small text-muted">{{ r.createdAt|date('d/m/Y H:i') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-2">Description</h6>
+                <p class="text-muted mb-0 small lh-lg">{{ event.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

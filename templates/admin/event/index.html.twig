@@ -1,0 +1,96 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Événements — Admin{% endblock %}
+{% block page_title %}Gestion des événements{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ path('admin_events_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>Nouvel événement
+    </a>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Titre</th>
+                    <th>Date</th>
+                    <th>Lieu</th>
+                    <th>Places</th>
+                    <th>Réservations</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+                <tr>
+                    <td class="text-muted small">{{ event.id }}</td>
+                    <td>
+                        <div class="fw-semibold small">{{ event.title }}</div>
+                        <div class="text-muted" style="font-size:.75rem">
+                            {{ event.description|slice(0,60) }}…
+                        </div>
+                    </td>
+                    <td class="small">
+                        {{ event.date|date('d/m/Y') }}<br>
+                        <span class="text-muted">{{ event.date|date('H:i') }}</span>
+                    </td>
+                    <td class="small">{{ event.location }}</td>
+                    <td>
+                        <span class="badge {% if event.availableSeats > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ event.availableSeats }}/{{ event.seats }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ path('admin_reservations_by_event', {id: event.id}) }}"
+                           class="badge bg-info text-dark text-decoration-none">
+                            {{ event.reservations|length }}
+                        </a>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ path('admin_events_show', {id: event.id}) }}"
+                               class="btn btn-outline-secondary" title="Voir">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ path('admin_events_edit', {id: event.id}) }}"
+                               class="btn btn-outline-primary" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="btn btn-outline-danger" title="Supprimer"
+                                    onclick="confirmDelete({{ event.id }}, '{{ event.title|e('js') }}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        <form id="delete-{{ event.id }}" method="post"
+                              action="{{ path('admin_events_delete', {id: event.id}) }}" class="d-none">
+                            <input type="hidden" name="_token"
+                                   value="{{ csrf_token('delete' ~ event.id) }}">
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        Aucun événement. <a href="{{ path('admin_events_new') }}">Créer le premier</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function confirmDelete(id, title) {
+    if (confirm('Supprimer "' + title + '" ?\nToutes les réservations seront supprimées.')) {
+        document.getElementById('delete-' + id).submit();
+    }
+}
+</script>
+{% endblock %}
