@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block title %}Réservation confirmée — EventBook{% endblock %}
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-5 text-center mt-5">
+            <i class="bi bi-check-circle-fill text-success mb-3" style="font-size:4rem"></i>
+            <h3>Réservation confirmée !</h3>
+            <p class="text-muted">Un email de confirmation a été envoyé à <strong>{{ reservation.email }}</strong></p>
+            <div class="bg-light rounded p-3 my-3 text-start">
+                <p><strong>Événement:</strong> {{ reservation.event.title }}</p>
+                <p><strong>Date:</strong> {{ reservation.event.date|date('d/m/Y à H:i') }}</p>
+                <p><strong>Lieu:</strong> {{ reservation.event.location }}</p>
+                <p><strong>Référence:</strong> #{{ reservation.id }}</p>
+            </div>
+            <a href="{{ path('app_events_index') }}" class="btn btn-primary mt-2">
+                <i class="bi bi-arrow-left me-1"></i>Retour aux événements
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

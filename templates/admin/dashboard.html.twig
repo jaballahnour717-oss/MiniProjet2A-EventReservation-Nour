@@ -1,0 +1,114 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Tableau de bord — Admin{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block body %}
+
+{# ── Stats ── #}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="--accent:#3b82f6">
+            <div class="label">Événements total</div>
+            <div class="value text-primary">{{ totalEvents }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="--accent:#10b981">
+            <div class="label">À venir</div>
+            <div class="value text-success">{{ upcomingEvents|length }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="--accent:#8b5cf6">
+            <div class="label">Réservations</div>
+            <div class="value" style="color:#8b5cf6">{{ totalReservations }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="--accent:#f59e0b">
+            <div class="label">Places restantes</div>
+            <div class="value text-warning">
+                {{ upcomingEvents|reduce((carry, e) => carry + e.availableSeats, 0) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {# ── Prochains événements ── #}
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-semibold mb-0">Prochains événements</h6>
+                    <a href="{{ path('admin_events_new') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i>Nouveau
+                    </a>
+                </div>
+                {% if upcomingEvents is empty %}
+                    <p class="text-muted small">Aucun événement à venir.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead><tr>
+                                <th>Titre</th><th>Date</th><th>Places</th><th></th>
+                            </tr></thead>
+                            <tbody>
+                            {% for event in upcomingEvents|slice(0, 6) %}
+                                <tr>
+                                    <td class="small fw-semibold">
+                                        {{ event.title|slice(0,35) }}{% if event.title|length > 35 %}…{% endif %}
+                                    </td>
+                                    <td class="small text-muted">{{ event.date|date('d/m/Y') }}</td>
+                                    <td>
+                                        <span class="badge {% if event.availableSeats > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ event.availableSeats }}/{{ event.seats }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('admin_events_show', {id: event.id}) }}"
+                                           class="btn btn-outline-secondary btn-sm py-0">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# ── Réservations récentes ── #}
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-3">Réservations récentes</h6>
+                {% if recentReservations is empty %}
+                    <p class="text-muted small">Aucune réservation.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead><tr><th>Nom</th><th>Événement</th><th>Date</th></tr></thead>
+                            <tbody>
+                            {% for r in recentReservations %}
+                                <tr>
+                                    <td class="small fw-semibold">{{ r.name }}</td>
+                                    <td class="small text-muted">
+                                        {{ r.event.title|slice(0,20) }}{% if r.event.title|length > 20 %}…{% endif %}
+                                    </td>
+                                    <td class="small text-muted">{{ r.createdAt|date('d/m H:i') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

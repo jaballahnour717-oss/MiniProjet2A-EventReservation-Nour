@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ event.title }} — EventBook{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col-md-8">
+        <a href="{{ path('app_events_index') }}" class="btn btn-outline-secondary btn-sm mb-3">
+            <i class="bi bi-arrow-left me-1"></i>Retour
+        </a>
+        <div class="card p-4">
+            {% if event.image %}
+                <img src="/uploads/{{ event.image }}" class="img-fluid rounded mb-4" alt="">
+            {% endif %}
+            <h2>{{ event.title }}</h2>
+            <div class="d-flex gap-3 text-muted my-3">
+                <span><i class="bi bi-calendar3 me-1"></i>{{ event.date|date('d/m/Y à H:i') }}</span>
+                <span><i class="bi bi-geo-alt me-1"></i>{{ event.location }}</span>
+                <span><i class="bi bi-people me-1"></i>{{ event.availableSeats }} places</span>
+            </div>
+            <p>{{ event.description }}</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h5><i class="bi bi-ticket-perforated me-2 text-primary"></i>Réserver</h5>
+            {% if app.user %}
+                {% if event.availableSeats > 0 %}
+                    <form method="post" action="{{ path('app_reserve', {id: event.id}) }}">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('reserve') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" name="phone" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Confirmer la réservation</button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-warning">Plus de places disponibles.</div>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    <a href="{{ path('app_login') }}">Connectez-vous</a> pour réserver.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

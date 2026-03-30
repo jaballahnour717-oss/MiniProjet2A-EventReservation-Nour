@@ -1,0 +1,74 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Réservations — Admin{% endblock %}
+{% block page_title %}Toutes les réservations{% endblock %}
+
+{% block body %}
+<div class="row g-4">
+    {% for event in events %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center py-2"
+                 style="background:#f8fafc">
+                <div>
+                    <span class="fw-semibold small">{{ event.title }}</span>
+                    <span class="text-muted small ms-2">
+                        <i class="bi bi-calendar3 me-1"></i>{{ event.date|date('d/m/Y') }}
+                        · <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+                    </span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary">{{ event.reservations|length }}</span>
+                    <a href="{{ path('admin_reservations_by_event', {id: event.id}) }}"
+                       class="btn btn-outline-secondary btn-sm py-0">
+                        Voir tout <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            {% if event.reservations is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Date</th></tr>
+                        </thead>
+                        <tbody>
+                        {% for r in event.reservations|slice(0, 3) %}
+                            <tr>
+                                <td class="small fw-semibold">{{ r.name }}</td>
+                                <td class="small">{{ r.email }}</td>
+                                <td class="small">{{ r.phone }}</td>
+                                <td class="small text-muted">{{ r.createdAt|date('d/m/Y H:i') }}</td>
+                            </tr>
+                        {% endfor %}
+                        {% if event.reservations|length > 3 %}
+                            <tr>
+                                <td colspan="4" class="text-center small text-muted py-2">
+                                    <a href="{{ path('admin_reservations_by_event', {id: event.id}) }}">
+                                        Voir toutes les {{ event.reservations|length }} réservations →
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="card-body py-2">
+                    <p class="text-muted small mb-0">Aucune réservation.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center text-muted py-5">
+                    <i class="bi bi-ticket-perforated display-4"></i>
+                    <p class="mt-2">Aucun événement trouvé.</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
